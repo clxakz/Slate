@@ -3,6 +3,14 @@
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
   "appId": "com.clxakz.slate",
   "copyright": "© 2025 clxakz",
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "clxakz",
+      "repo": "Slate",
+      "releaseType": "release"
+    }
+  ],
   "asar": true,
   "productName": "Slate",
   "directories": {

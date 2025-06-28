@@ -4,6 +4,11 @@ import path from 'node:path';
 import { createFolder, deleteProjectFolder, loadProjectsMetadata, openDirectory, openInIde, renameProjectFolder, saveProjectsMetadata } from './project';
 import { ProjectType, SettingsSchema } from '@/components/global-provider';
 import Store from 'electron-store';
+import { autoUpdater } from 'electron-updater';
+// import log from 'electron-log';
+
+// autoUpdater.logger = log;
+autoUpdater.autoDownload = false;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 process.env.APP_ROOT = path.join(__dirname, '..')
@@ -80,6 +85,11 @@ export let projectsPath = "";
 app.whenReady().then(() => {
   createWindow();
 
+  autoUpdater.checkForUpdates();
+
+  autoUpdater.on('update-available', (info) => {
+    win?.webContents.send('update-available', info);
+  });
 
   const documentsPath = app.getPath("documents");
   store = new Store<SettingsSchema>({
@@ -100,6 +110,19 @@ app.whenReady().then(() => {
   });
 });
 
+
+ipcMain.handle("install-update", async (_event) => {
+  try {
+    autoUpdater.downloadUpdate();
+    return {success: true};
+  } catch (err: any) {
+    return {error: err.message};
+  }
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+  win?.webContents.send('update-download-progress', progressObj);
+});
 
 
 ipcMain.handle("config-set", async (_event, args: {settings: SettingsSchema}) => {
@@ -163,3 +186,7 @@ ipcMain.handle('select-folder', async () => {
     return { success: false };
   };
 });
+
+ipcMain.handle("get-app-version", (_event) => {
+  return app.getVersion();
+})

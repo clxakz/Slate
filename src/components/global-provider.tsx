@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { create } from 'zustand';
+import NewUpdateDialog from './ui/dialogs/new-update';
 
 export enum Pages {
     projects = "projects",
@@ -173,6 +174,8 @@ export const useGlobal = create<GlobalState>((set, get) => ({
 export default function GlobalProvider({children}: {children: ReactNode}) {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [settingsLoaded, setSettingsLoaded] = useState<boolean>(false);
+  const [updateDialogOpen, setUpdateDialogOpen] = useState<boolean>(false);
+  const [updateVersion, setUpdateVersion] = useState<string>("");
   const { projects, setProjects, settings, setSettingsStore } = useGlobal();
 
   useEffect(() => {
@@ -213,9 +216,20 @@ export default function GlobalProvider({children}: {children: ReactNode}) {
   }, []);
 
 
+  useEffect(() => {
+    const unsubscribe = window.api.onUpdateAvailable((info: any) => {
+      setUpdateVersion(info.version);
+      setUpdateDialogOpen(true);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <>
+      <NewUpdateDialog open={updateDialogOpen} onOpenChange={setUpdateDialogOpen} version={updateVersion}/>
       {children}
     </>
   );

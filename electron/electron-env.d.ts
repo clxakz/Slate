@@ -27,5 +27,7 @@ interface Window {
 
   api: {
     send: (channel: string, args: any) => any;
+    onUpdateAvailable: (callback: any) => any;
+    onUpdateProgress: (callback: any) => any;
   }
 }

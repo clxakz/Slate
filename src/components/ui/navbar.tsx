@@ -5,6 +5,7 @@ import { BadgePlus, ChevronLeft, Cog, LayoutGrid, List, Search } from "lucide-re
 import { Button } from "@/components/shadcn/button";
 import { Input } from "@/components/shadcn/input";
 import NewProjectDialog from "./dialogs/new-project";
+import { useEffect, useState } from "react";
 
 
 export default function Navbar() {
@@ -79,6 +80,16 @@ function ProjectsControls() {
 
 function SettingsControls() {
     const { setPage } = useGlobal();
+    const [version, setVersion] = useState<number>();
+   
+    useEffect(() => {
+        const getVersion = async () => {
+            const result = await window.api.send("get-app-version", {});
+            setVersion(result);
+        }
+
+        getVersion();
+    }, []);
 
     const handleBackToProjects = () => {
         setPage(Pages.projects);
@@ -89,12 +100,14 @@ function SettingsControls() {
             variants={Transition}
             initial="initial"
             animate="animate"
-            exit="exit">
+            exit="exit"
+            className="flex items-center">
 
-                <Button onClick={handleBackToProjects} variant={"ghost"} className="ml-auto">
+                <Button onClick={handleBackToProjects} variant={"ghost"}>
                     <ChevronLeft/> Back To Projects
                 </Button>
 
+                <p className="ml-auto pr-2">v{version}</p>
         </motion.div>
     );
 }
