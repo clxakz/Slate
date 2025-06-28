@@ -1,7 +1,19 @@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/shadcn/alert-dialog";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function NewUpdateDialog({open, onOpenChange, version}: {open: boolean, onOpenChange: (value: boolean) => void, version: string}) {
+    const [currVersion, setCurrVersion] = useState<number>();
+       
+    useEffect(() => {
+        const getVersion = async () => {
+            const result = await window.api.send("get-app-version", {});
+            setCurrVersion(result);
+        }
+    
+        getVersion();
+    }, []);
+    
     const handleUpdate = async () => {
         const result = await window.api.send("install-update", {});
         if (result.success === true) { toast.info("Installing update..."); }
@@ -14,7 +26,7 @@ export default function NewUpdateDialog({open, onOpenChange, version}: {open: bo
                 <AlertDialogHeader>
                 <AlertDialogTitle>New update is available</AlertDialogTitle>
                 <AlertDialogDescription>
-                    Version {version}
+                    {currVersion}{" > "}{version}
                 </AlertDialogDescription>
                 </AlertDialogHeader>
                 

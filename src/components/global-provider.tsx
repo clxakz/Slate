@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { create } from 'zustand';
 import NewUpdateDialog from './ui/dialogs/new-update';
+import { Option } from '@/components/shadcn/multiselect';
 
 export enum Pages {
     projects = "projects",
@@ -13,10 +14,10 @@ type GlobalState = {
     setPage: (page: Pages) => void;
     projects: ProjectType[];
     setProjects: (projects: ProjectType[]) => void;
-    addProject: (name: string, description: string) => void;
+    addProject: (name: string, description: string, languages: string[]) => void;
     deleteProject: (id: number, include_files: boolean) => void;
     pinProject: (id: number) => void;
-    editProject: (id: number, new_name: string, new_description: string) => void;
+    editProject: (id: number, new_name: string, new_description: string, languages: string[]) => void;
     openInIde: (name: string) => Promise<boolean>;
     openDirectory: (name: string) => void;
     search: string;
@@ -33,6 +34,7 @@ export type ProjectType = {
   description: string,
   pinned: boolean,
   missingfiles: boolean,
+  languages: string[],
 }
 
 
@@ -43,6 +45,63 @@ export type SettingsSchema = {
   vertical: boolean;
 };
 
+export const LanguageOptions: Option[] = [
+  { label: 'Python', value: 'python' },
+  { label: 'JavaScript', value: 'javascript' },
+  { label: 'TypeScript', value: 'typescript' },
+  { label: 'Java', value: 'java' },
+  { label: 'C', value: 'c' },
+  { label: 'C++', value: 'cpp' },
+  { label: 'C#', value: 'csharp' },
+  { label: 'Go', value: 'go' },
+  { label: 'Rust', value: 'rust' },
+  { label: 'PHP', value: 'php' },
+  { label: 'Ruby', value: 'ruby' },
+  { label: 'Swift', value: 'swift' },
+  { label: 'Kotlin', value: 'kotlin' },
+  { label: 'Dart', value: 'dart' },
+  { label: 'Perl', value: 'perl' },
+  { label: 'Lua', value: 'lua' },
+  { label: 'Haskell', value: 'haskell' }
+];
+
+import pythonIcon from '../../resources/languageicons/python.svg?asset';
+import javascriptIcon from '../../resources/languageicons/javascript.svg?asset';
+import typescriptIcon from '../../resources/languageicons/typescript.svg?asset';
+import javaIcon from '../../resources/languageicons/java.svg?asset';
+import cIcon from '../../resources/languageicons/c.svg?asset';
+import cppIcon from '../../resources/languageicons/cpp.svg?asset';
+import csharpIcon from '../../resources/languageicons/csharp.svg?asset';
+import goIcon from '../../resources/languageicons/go.svg?asset';
+import rustIcon from '../../resources/languageicons/rust.svg?asset';
+import phpIcon from '../../resources/languageicons/php.svg?asset';
+import rubyIcon from '../../resources/languageicons/ruby.svg?asset';
+import swiftIcon from '../../resources/languageicons/swift.svg?asset';
+import kotlinIcon from '../../resources/languageicons/kotlin.svg?asset';
+import dartIcon from '../../resources/languageicons/dart.svg?asset';
+import perlIcon from '../../resources/languageicons/perl.svg?asset';
+import luaIcon from '../../resources/languageicons/lua.svg?asset';
+import haskellIcon from '../../resources/languageicons/haskell.svg?asset';
+
+export const languageIconMap: Record<string, string> = {
+  python: pythonIcon,
+  javascript: javascriptIcon,
+  typescript: typescriptIcon,
+  java: javaIcon,
+  c: cIcon,
+  cpp: cppIcon,
+  csharp: csharpIcon,
+  go: goIcon,
+  rust: rustIcon,
+  php: phpIcon,
+  ruby: rubyIcon,
+  swift: swiftIcon,
+  kotlin: kotlinIcon,
+  dart: dartIcon,
+  perl: perlIcon,
+  lua: luaIcon,
+  haskell: haskellIcon,
+};
 
 
 export const useGlobal = create<GlobalState>((set, get) => ({
@@ -52,7 +111,7 @@ export const useGlobal = create<GlobalState>((set, get) => ({
   projects: [],
   setProjects: (projects: ProjectType[]) => set({ projects }),
 
-  addProject: async (name: string, description: string) => {
+  addProject: async (name: string, description: string, languages: string[]) => {
     const formattedName = name.replace(/\s+/g, get().settings.whitespacereplace).toLowerCase();;
 
     const exists = get().projects.some(
@@ -70,6 +129,7 @@ export const useGlobal = create<GlobalState>((set, get) => ({
           id: projects.length > 0 ? projects[projects.length - 1].id + 1 : 1,
           name: formattedName,
           description,
+          languages,
           pinned: false,
           missingfiles: false,
         };
@@ -126,7 +186,7 @@ export const useGlobal = create<GlobalState>((set, get) => ({
     else { toast.error(result.error) };
   },
 
-  editProject: async (id: number, new_name: string, new_description: string) => {
+  editProject: async (id: number, new_name: string, new_description: string, languages: string[]) => {
     const name = get().projects.find(p => p.id === id)?.name;
     const formattedName = new_name.replace(/\s+/g, get().settings.whitespacereplace).toLowerCase();;
     const result = await window.api.send("rename-project-folder", {name: name, new_name: formattedName});
@@ -137,7 +197,7 @@ export const useGlobal = create<GlobalState>((set, get) => ({
       set((state) => {
         const updatedProjects = state.projects.map(project =>
           project.id === id
-            ? { ...project, name: formattedName, description: new_description }
+            ? { ...project, name: formattedName, description: new_description, languages }
             : project
         );
       

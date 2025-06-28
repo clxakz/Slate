@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { ProjectType, useGlobal } from "../global-provider";
+import { languageIconMap, ProjectType, useGlobal } from "../global-provider";
 import { Button } from "../shadcn/button";
 import { CodeXml, Ellipsis, FolderCode, Loader, Pencil, Pin, PinOff, Trash, TriangleAlert } from "lucide-react";
 import DeleteProjectDialog from "./dialogs/delete-project";
@@ -44,8 +44,25 @@ export default function ProjectCard({project, index}: {project: ProjectType, ind
             exit={{scale: 0.8, filter: "blur(2px)", opacity: 0, y: 30}}
             transition={{delay: index*0.1}}
             className={`border-1 rounded-md bg-background/10 backdrop-blur-md flex ${settings.vertical ? "max-h-[150px] min-h-[150px]" : "flex-col max-h-[200px] min-h-[200px]"} overflow-hidden`}>
-                <div className="relative group p-1 flex-1">
-                    <div className="z-10 h-full w-full overflow-y-scroll opacity-0 group-hover:opacity-100 duration-200 absolute top-0 p-1 scrollbar-hide">
+                <div className={`pt-1 pl-1 flex flex-wrap gap-1 ${settings.vertical && "max-w-[120px]"}`}>
+                   {project.languages && Array.isArray(project.languages) && project.languages.map((language, index) => {
+                    const iconSrc = languageIconMap[language.toLowerCase()];
+                    return (
+                        <img
+                        key={index}
+                        src={iconSrc}
+                        alt={language}
+                        className="w-5 h-5"
+                        onError={e => {
+                            e.currentTarget.src = "none"; // fallback icon
+                        }}
+                        />
+                    );
+                    })}
+                </div>
+                
+                <div className="relative group p-1 pt-0 flex-1">
+                    <div className="z-10 h-full w-full overflow-y-scroll opacity-0 group-hover:opacity-100 duration-200 absolute top-0 p-1 pt-0 scrollbar-hide">
                         <p className="break-words">{project.description}</p>
                     </div>
                     <p className="group-hover:blur-[4px] duration-100 truncate text-wrap break-words line-clamp-6">{project.name}</p>

@@ -7,7 +7,8 @@ import { useForm } from "react-hook-form";
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
-import { useGlobal } from "@/components/global-provider";
+import { LanguageOptions, useGlobal } from "@/components/global-provider";
+import MultipleSelector from "@/components/shadcn/multiselect";
 
 
 export default function NewProjectDialog({children}: {children: ReactNode}) {
@@ -27,11 +28,17 @@ export default function NewProjectDialog({children}: {children: ReactNode}) {
     );
 }
 
+const optionSchema = z.object({
+  label: z.string(),
+  value: z.string(),
+  disable: z.boolean().optional(),
+});
 
 
 const formSchema = z.object({
   name: z.string().min(1),
-  description: z.string().optional()
+  description: z.string().optional(),
+  languages: z.array(optionSchema).optional(),
 });
 
 function NewProjectForm({setOpen}: {setOpen: (state: boolean) => void}) {
@@ -44,7 +51,8 @@ function NewProjectForm({setOpen}: {setOpen: (state: boolean) => void}) {
 
     function onSubmit(values: z.infer < typeof formSchema > ) {
         try {
-            addProject(values.name, values.description ?? "No description");
+            const valuesOnly = values.languages?.map(lang => lang.value);
+            addProject(values.name, values.description ?? "No description", valuesOnly ?? []);
             setOpen(false);
         } catch (error) {
             console.error("Form submission error", error);
@@ -93,6 +101,31 @@ function NewProjectForm({setOpen}: {setOpen: (state: boolean) => void}) {
                 </FormItem>
             )}
             />
+
+            <FormField
+            control={form.control}
+            name="languages"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Languages</FormLabel>
+                <FormControl>
+                    <MultipleSelector
+                    hidePlaceholderWhenSelected
+                    {...field}
+                    defaultOptions={LanguageOptions}
+                    placeholder="Select languages this project will use..."
+                    emptyIndicator={
+                        <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                        no results found.
+                        </p>
+                    }
+                    />
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+            
             <Button type="submit">Create</Button>
         </form>
         </Form>

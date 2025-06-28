@@ -79,7 +79,7 @@ app.on('activate', () => {
   };
 })
 
-// app.disableHardwareAcceleration();
+app.disableHardwareAcceleration();
 export let store: any = null;
 export let projectsPath = "";
 app.whenReady().then(() => {
