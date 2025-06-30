@@ -3,7 +3,7 @@ import { access, constants, mkdir, readFile, rename, rm, writeFile } from 'fs/pr
 import { join } from 'path';
 import { exec } from 'child_process';
 import { ProjectType } from '@/components/global-provider'
-import { projectsPath } from './main';
+import { closeOnCode, projectsPath } from './main';
 
 
 // const projectsPath = join(app.getPath("documents"), "pm-projects");
@@ -85,6 +85,8 @@ export async function openInIde(name: string) {
       if (stderr) {
         console.warn(stderr);
       }
+
+      if (closeOnCode) { app.quit(); };
       resolve({ success: true });
     });
   });

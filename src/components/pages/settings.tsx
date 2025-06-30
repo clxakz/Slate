@@ -70,7 +70,7 @@ function Appearance() {
             initial="initial"
             animate="animate"
             exit="exit"
-            className="flex flex-col gap-1">
+            className="flex flex-col gap-3">
                 <div className="flex gap-1 justify-between">
                     <Label htmlFor="dark-mode">Dark Mode</Label>
                     <Switch id="dark-mode" checked={theme === "dark"} onCheckedChange={handleSwitchTheme}/>
@@ -93,13 +93,22 @@ function Projects() {
         setSetting("whitespacereplace", v);
     };
 
+    const handleCloseOnCode = (v: boolean) => {
+        setSetting("closeoncode", v);
+    };
+
     return (
         <motion.div
             variants={Transition}
             initial="initial"
             animate="animate"
             exit="exit"
-            className="flex flex-col gap-1">
+            className="flex flex-col gap-3">
+                <div className="flex gap-1 justify-between">
+                    <Label htmlFor="close-on-code">Close Slate when opening a project</Label>
+                    <Switch id="close-on-code" checked={getSetting("closeoncode")} onCheckedChange={handleCloseOnCode}/>
+                </div>
+
                 <div className="flex gap-1 justify-between items-center">
                     <div>
                         <Label htmlFor="projects-directory">Projects folder</Label>
@@ -118,6 +127,7 @@ function Projects() {
                         </SelectContent>
                     </Select>
                 </div>
+
         </motion.div>
     );
 }

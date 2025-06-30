@@ -43,7 +43,7 @@ export default function ProjectCard({project, index}: {project: ProjectType, ind
             animate={{scale: 1.0, filter: "blur(0px)", opacity: 1, y: 0}}
             exit={{scale: 0.8, filter: "blur(2px)", opacity: 0, y: 30}}
             transition={{delay: index*0.1}}
-            className={`border-1 rounded-md bg-background/10 backdrop-blur-md flex ${settings.vertical ? "max-h-[150px] min-h-[150px]" : "flex-col max-h-[200px] min-h-[200px]"} overflow-hidden`}>
+            className={`border-1 font-inconsolata rounded-md bg-background/10 backdrop-blur-md flex ${settings.vertical ? "max-h-[150px] min-h-[150px]" : "flex-col max-h-[200px] min-h-[200px]"} overflow-hidden`}>
                 <div className={`pt-1 pl-1 flex flex-wrap gap-1 ${settings.vertical && "max-w-[120px]"}`}>
                    {project.languages && Array.isArray(project.languages) && project.languages.map((language, index) => {
                     const iconSrc = languageIconMap[language.toLowerCase()];
@@ -63,9 +63,9 @@ export default function ProjectCard({project, index}: {project: ProjectType, ind
                 
                 <div className="relative group p-1 pt-0 flex-1">
                     <div className="z-10 h-full w-full overflow-y-scroll opacity-0 group-hover:opacity-100 duration-200 absolute top-0 p-1 pt-0 scrollbar-hide">
-                        <p className="break-words">{project.description}</p>
+                        <p className="break-words font-semibold">{project.description}</p>
                     </div>
-                    <p className="group-hover:blur-[4px] duration-100 truncate text-wrap break-words line-clamp-6">{project.name}</p>
+                    <p className="group-hover:blur-[6px] duration-100 truncate text-wrap break-words line-clamp-6 font-semibold">{project.name}</p>
                 </div>
 
                 <div className={`flex ${settings.vertical ? "flex-col border-l-1" : "border-t-1"} bg-zinc-200/5 z-10`}>

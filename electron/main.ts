@@ -82,6 +82,7 @@ app.on('activate', () => {
 app.disableHardwareAcceleration();
 export let store: any = null;
 export let projectsPath = "";
+export let closeOnCode = false;
 app.whenReady().then(() => {
   createWindow();
 
@@ -98,15 +99,22 @@ app.whenReady().then(() => {
       projectspath: path.join(documentsPath, "pm-projects"),
       whitespacereplace: "-",
       vertical: false,
+      closeoncode: false,
     },
   });
 
   projectsPath = store.get("projectspath");
+  closeOnCode = store.get("closeoncode");
 
   // Update projects path
   store.onDidChange("projectspath", (newValue: string) => {
     projectsPath = newValue;
     console.log("Updated projectspath:", projectsPath);
+  });
+
+  store.onDidChange("closeoncode", (newValue: boolean) => {
+    closeOnCode = newValue;
+    console.log("Updated closeoncode:", closeOnCode);
   });
 });
 

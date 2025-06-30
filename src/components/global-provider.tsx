@@ -43,6 +43,7 @@ export type SettingsSchema = {
   projectspath: string;
   whitespacereplace: string;
   vertical: boolean;
+  closeoncode: boolean;
 };
 
 export const LanguageOptions: Option[] = [
@@ -212,7 +213,7 @@ export const useGlobal = create<GlobalState>((set, get) => ({
   search: "",
   setSearch: (value: string) => set({ search: value }),
 
-  settings: {theme: "light", projectspath: "", whitespacereplace: "", vertical: false},
+  settings: {theme: "light", projectspath: "", whitespacereplace: "", vertical: false, closeoncode: false},
   setSettingsStore: (store: SettingsSchema) => set({ settings: store }),
 
   setSetting: (key: keyof SettingsSchema, value: any) => {
