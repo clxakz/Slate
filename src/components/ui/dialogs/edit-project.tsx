@@ -15,7 +15,7 @@ export default function EditProjectDialog({project, open, onOpenChange}: {projec
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>New Project</DialogTitle>
+                    <DialogTitle>Edit Project</DialogTitle>
                 </DialogHeader>
 
                 <EditProjectForm setOpen={onOpenChange} project={project}/>
